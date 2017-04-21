@@ -111,7 +111,7 @@ public abstract class Agent {
 	/** Agent to String
 	 */
 	public String toString() {
-		return "Pos:" + this.position + "; V:" + this.velocity;
+		return "Pos:"+this.position+";H:"+this.heading+";V:"+this.velocity;
 	}
 	
 }

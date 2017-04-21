@@ -10,15 +10,12 @@ import Environment.Environment;
 
 public class GoodGuy extends Agent {
 
-	private float coeffAlignment;
-	private float coeffCohesion;
-	private float coeffRepulsion;
+	private static float coeffAlignment = 4;
+	private static float coeffCohesion = 1;
+	private static float coeffRepulsion = 10;
 	
 	public GoodGuy(Coordinates pos, float vMin, float vMax, float radius, float angle, int size, Environment env) {
 		super(pos, vMin, vMax, radius, angle, size, env);
-		this.coeffAlignment = 4;
-		this.coeffCohesion = 2;
-		this.coeffRepulsion = 2;
 	}
 	
 	@Override
@@ -47,7 +44,7 @@ public class GoodGuy extends Agent {
 				this.velocity = newVelocity;
 			}
 			// TODO : use maxTurn as attribute + probably error on value !!
-			this.heading.turnTo(new Angle(totalVector), 10);
+			this.heading.turnTo(new Angle(totalVector), (float) (Math.PI/20));
 		} else {
 			// Lets the agent wander in its current direction
 			this.velocity = this.minVelocity;
@@ -62,17 +59,17 @@ public class GoodGuy extends Agent {
 	private Coordinates alignmentForce(ArrayList<Agent> neighbors) {
 		ArrayList<Coordinates> coordList = new ArrayList<Coordinates>();
 		Agent agent;
-		float dx, dy;
+		Coordinates vect;
 		for (int i=0; i<neighbors.size(); i++) {
 			agent = neighbors.get(i);
-			dx = (float) (agent.velocity*Math.cos(agent.heading.getAngle()));
-			dy = (float) (agent.velocity*Math.sin(agent.heading.getAngle()));
-			// TODO : normalize result
-			coordList.add(new Coordinates(dx, dy));
+			// Direction vector of the agent
+			vect = new Coordinates(agent.heading);
+			vect.mult(agent.velocity);
+			coordList.add(vect);
 		}
 		Coordinates alignmentVector = Coordinates.mean(coordList);
 		// Multiplication by a coefficient
-		alignmentVector.mult(this.coeffAlignment);
+		alignmentVector.mult(GoodGuy.coeffAlignment);
 		return alignmentVector;
 	}
 	
@@ -88,7 +85,7 @@ public class GoodGuy extends Agent {
 		Coordinates cohesionVector = Coordinates.mean(coordList);
 		cohesionVector.minus(this.position);
 		// Multiplication by a coefficient
-		cohesionVector.mult(this.coeffCohesion);
+		cohesionVector.mult(GoodGuy.coeffCohesion);
 		return cohesionVector;
 	}
 	
@@ -110,7 +107,7 @@ public class GoodGuy extends Agent {
 			repulsionVector.plus(tempVector);
 		}
 		// Multiplication by a coefficient
-		repulsionVector.mult(this.coeffRepulsion);
+		repulsionVector.mult(GoodGuy.coeffRepulsion);
 		return repulsionVector;
 	}
 

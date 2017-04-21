@@ -2,29 +2,35 @@ package Environment;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+/** Angle between 0 and 2Pi
+ * @author Clément
+ *
+ */
 public class Angle {
 
 	private float angle;
+	private static float max = (float) (2*Math.PI);
 	
 	/** Random angle constructor
 	 */
 	public Angle() {
-		this.angle = ThreadLocalRandom.current().nextInt(0, 360+1);
+		this.angle = ThreadLocalRandom.current().nextFloat()*Angle.max;
 	}
 	
 	/**
 	 * @param init
 	 */
 	public Angle(float init) {
-		float temp = init % 360;
-		this.angle = temp < 0 ? temp + 360 : temp;
+		float temp = init % Angle.max;
+		this.angle = temp < 0 ? temp + Angle.max : temp;
 	}
 
 	/** Creates an angle from a vector (set of coordinates)
 	 * @param vector
 	 */
 	public Angle(Coordinates vector) {
-		this.angle = (float) ((180/Math.PI) * Math.atan2(vector.y, vector.x));
+		float temp = (float) Math.atan2(vector.y, vector.x);
+		this.angle = temp < 0 ? temp + Angle.max : temp;
 	}
 	
 	/**
@@ -38,13 +44,14 @@ public class Angle {
 	 * @param oldDirection
 	 * @return diff
 	 */
-	public float subtract(Angle oldDirection) {
+	public float subtract(Angle angle) {
 		float newAngle = this.angle;
-		float oldAngle = oldDirection.getAngle();
-		float diff = Math.abs(newAngle - oldAngle) % 360;
-		diff = diff > 180 ? 360 - diff : diff;
-		float sign = (oldAngle + diff) % 360 == newAngle ? 1 : -1;
-		return diff*sign;
+		float oldAngle = angle.getAngle();
+		float diff = (oldAngle - newAngle) % Angle.max;
+		if (Math.abs(diff)>Angle.max/2) {
+			diff = diff > 0 ? diff - Angle.max : diff + Angle.max;
+		}
+		return diff;
 	}
 	
 	/** Turns from a given delta
@@ -52,10 +59,8 @@ public class Angle {
 	 * @return newAngle
 	 */
 	public float turnFrom(float delta) {
-		this.angle = (this.angle + delta) % 360;
-		if (this.angle < 0) {
-			this.angle += 360;
-		}
+		this.angle = (this.angle + delta) % Angle.max;
+		this.angle = this.angle < 0 ? this.angle += Angle.max : this.angle;
 		return this.angle;
 	}
 	
@@ -63,8 +68,8 @@ public class Angle {
 	 * @param newDirection
 	 * @return newAngle
 	 */
-	public float turnTo(Angle newDirection, int maxTurn) {
-		float diff = newDirection.subtract(this);
+	public float turnTo(Angle newDirection, float maxTurn) {
+		float diff = this.subtract(newDirection);
 		if (Math.abs(diff) > maxTurn) {
 			diff = diff < 0 ? -maxTurn : maxTurn;
 		}
@@ -75,7 +80,7 @@ public class Angle {
 	/** Angle to string
 	 */
 	public String toString() {
-		return "" + this.angle + "°";
+		return this.angle + "rad";
 	}
 	
 }

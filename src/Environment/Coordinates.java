@@ -13,6 +13,14 @@ public class Coordinates {
 		this.y = y;
 	}
 	
+	/** Coordinates of a vector from an angle
+	 * @param angle
+	 */
+	public Coordinates(Angle angle) {
+		this.x = (float) Math.cos(angle.getAngle());
+		this.y = (float) Math.sin(angle.getAngle());
+	}
+	
 	/** Copy constructor
 	 * @param c
 	 */
