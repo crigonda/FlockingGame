@@ -1,5 +1,7 @@
 package Game;
 
+import GUI.ParamFrame;
+
 /** Launches a game with given parameters
  * @author Clément
  */
@@ -13,14 +15,18 @@ public class GameLauncher {
 		float minVelocity = (float) 3;
 		float maxVelocityGG = (float) 4;
 		float maxVelocityBG = (float) 3;
-		float radius = (float) 50;
-		float angle = (float) 100;
+		float ggRadius = (float) 50;
+		float bgRadius = 2*ggRadius;
+		float angle = (float) Math.PI;
 		// =============================================================================================================
-		// Creates the game
-		Game game = new Game(nbGoodGuys, nbBadGuys, agentSize, minVelocity, 
-				maxVelocityGG, maxVelocityBG, radius, angle);
-		// Runs it
-		game.run();
+		if (args.length == 2) {
+			nbGoodGuys = Integer.parseInt(args[0]);
+			nbBadGuys = Integer.parseInt(args[1]);
+		} else {
+			// Asks the user for parameters values
+			new ParamFrame(nbGoodGuys, nbBadGuys, agentSize, minVelocity, maxVelocityGG, maxVelocityBG,
+					ggRadius, bgRadius, angle);
+		}
 	}
 
 }

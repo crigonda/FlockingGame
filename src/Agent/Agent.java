@@ -12,6 +12,8 @@ import Environment.Angle;
  */
 public abstract class Agent {
 	
+	// Used to make the agents turn smoothly
+	protected static float maxTurn = (float) (Math.PI/20);
 	// Agent attributes
 	protected Coordinates position;
 	protected float velocity;
@@ -20,7 +22,7 @@ public abstract class Agent {
 	protected float sightRadius;
 	protected float sightAngle;
 	protected Angle heading;
-	protected int size;
+	protected float size;
 	// Environment
 	protected Environment environment;
 	
@@ -30,7 +32,7 @@ public abstract class Agent {
 	 * @param size
 	 * @param env
 	 */
-	public Agent(Coordinates pos, float vMin, float vMax, float radius, float angle, int size, Environment env) {
+	public Agent(Coordinates pos, float vMin, float vMax, float radius, float angle, float size, Environment env) {
 		// Agent attributes
 		this.position = pos;
 		this.velocity = vMin;
@@ -75,7 +77,7 @@ public abstract class Agent {
 	/**
 	 * @return size
 	 */
-	public int getSize() {
+	public float getSize() {
 		return this.size;
 	}
 
@@ -84,6 +86,15 @@ public abstract class Agent {
 	 */
 	public Environment getEnvironment() {
 		return environment;
+	}
+	
+	/** Returns the class name of an agent
+	 * @param agent
+	 * @return className
+	 */
+	public String getAgentClassName() {
+		String[] tab = this.getClass().toString().split(" ");
+		return tab[1];
 	}
 	
 	/** Moves the agent
@@ -100,6 +111,14 @@ public abstract class Agent {
 		float dx = (float) (this.velocity*Math.cos(this.heading.getAngle()));
 		float dy = (float) (this.velocity*Math.sin(this.heading.getAngle()));
 		this.environment.move(this.position, dx, dy);
+	}
+	
+	/** Returns true if two agents are colliding, else false
+	 * @param agent
+	 * @return collideWith
+	 */
+	public boolean collideWith(Agent agent) {
+		return this.position.distance(agent.position) < this.size + agent.size;
 	}
 	
 	/** Applies forces to the agent to change its heading/velocity

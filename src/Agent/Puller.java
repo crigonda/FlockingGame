@@ -11,10 +11,10 @@ import Environment.Environment;
  */
 public class Puller extends Agent {
 	
-	public static int pullingRadius = 200;
-	public static int pullerSize = 15;
+	public static int pullingRadius = 250;
+	public static float pullerSize = 15;
 
-	public Puller(Coordinates pos, float vMin, float vMax, float radius, float angle, int size, Environment env) {
+	public Puller(Coordinates pos, float vMin, float vMax, float radius, float angle, float size, Environment env) {
 		super(pos, 0, 0, 0, 0, pullerSize, env);
 	}
 
@@ -27,7 +27,7 @@ public class Puller extends Agent {
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(Color.YELLOW);
-		g.fillOval((int) this.position.x, (int) this.position.y, this.size, this.size);
+		g.fillOval((int) this.position.x, (int) this.position.y, (int) this.size, (int) this.size);
 	}
 
 }

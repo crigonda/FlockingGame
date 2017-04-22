@@ -1,6 +1,7 @@
 package Environment;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -46,20 +47,11 @@ public class Environment {
 		return this.agents;
 	}
 	
-	/** Returns the class name of an agent
-	 * @param agent
-	 * @return className
-	 */
-	private String getAgentClassName(Agent agent) {
-		String[] tab = agent.getClass().toString().split(" ");
-		return tab[1];
-	}
-	
 	/** Adds an agent to the environment
 	 * @param agent
 	 */
 	public void addAgent(Agent agent) {
-		String className = this.getAgentClassName(agent);
+		String className = agent.getAgentClassName();
 		// Creates a list to store the agents of the same type, if it does not already exist 
 		if (this.agents.get(className) == null) {
 			this.agents.put(className, new ArrayList<Agent>());
@@ -90,17 +82,19 @@ public class Environment {
 	 */
 	public void moveAgents() {
 		ArrayList<Agent> agents;
-		for (Entry<String, ArrayList<Agent>> entry : this.agents.entrySet()) {
-			agents = entry.getValue();
-			for (int i=0; i<agents.size(); i++) {
-				// Apply forces on the agent
-				agents.get(i).applyForces();
-				// Makes the agent move one step forward
-				agents.get(i).forward();
-				// Detects collisions and deal with them
-				agents.get(i).detectCollisions();
+		try {
+			for (Entry<String, ArrayList<Agent>> entry : this.agents.entrySet()) {
+				agents = entry.getValue();
+				for (int i=0; i<agents.size(); i++) {
+					// Apply forces on the agent
+					agents.get(i).applyForces();
+					// Makes the agent move one step forward
+					agents.get(i).forward();
+					// Detects collisions and deal with them
+					agents.get(i).detectCollisions();
+				}
 			}
-		}
+		} catch (ConcurrentModificationException e) {}
 	}
 	
 	/** Moves an object in the environment (torus behavior)
@@ -119,13 +113,13 @@ public class Environment {
 	 * @param agent
 	 * @param radius
 	 * @param sightAngle
-	 * @param sameType
+	 * @param typeName <br>Use empty string ("") as parameter to consider all types of agent
 	 * @return neighbors
 	 */
-	public ArrayList<Agent> neighbors(Agent agent, float radius, float sightAngle, boolean sameType) {
+	public ArrayList<Agent> neighbors(Agent agent, float radius, float sightAngle, String typeName) {
 		ArrayList<Agent> agents;
 		// Iterates only on the interesting agents
-		agents = sameType ? this.getTypeAgents(this.getAgentClassName(agent)) : this.getAllAgents();
+		agents = !typeName.equals("") ? this.getTypeAgents(typeName) : this.getAllAgents();
 		ArrayList<Agent> neighbors = new ArrayList<Agent>();
 		Coordinates c, coord = agent.getPosition();
 		for (int i=0; i<agents.size(); i++) {

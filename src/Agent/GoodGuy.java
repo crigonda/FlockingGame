@@ -13,51 +13,50 @@ import Environment.Environment;
  */
 public class GoodGuy extends Agent {
 
-	// Used to make the agents turn smoothly
-	private static float maxTurn = (float) (Math.PI/20);
+	
 	// Force coefficients
 	private static float coeffAlignment = (float) 4;
-	private static float coeffCohesion = (float) 1.1;
+	private static float coeffCohesion = (float) 1.3;
 	private static float coeffRepulsion = (float) 13;
 	private static float coeffPulling = (float) 0.5;
 
-	public GoodGuy(Coordinates pos, float vMin, float vMax, float radius, float angle, int size, Environment env) {
+	public GoodGuy(Coordinates pos, float vMin, float vMax, float radius, float angle, float size, Environment env) {
 		super(pos, vMin, vMax, radius, angle, size, env);
 	}
 
 	@Override
 	public void applyForces() {
-		ArrayList<Agent> neighbors = this.environment.neighbors(this, this.sightRadius, this.sightAngle, true);
+		ArrayList<Agent> neighbors = 
+				this.environment.neighbors(this, this.sightRadius, this.sightAngle, "Agent.GoodGuy");
+		// Sum of the force vectors
+		Coordinates totalVector = new Coordinates(0, 0);
+		// Pulling force
+		Coordinates pullingVector = this.pullingForce();
+		totalVector.plus(pullingVector);
 		// Applies flocking forces only if there are neighbors agents
 		if (neighbors.size() > 0) {
 			// Alignment force
 			Coordinates alignmentVector = this.alignmentForce(neighbors);
+			totalVector.plus(alignmentVector);
 			// Cohesion force
 			Coordinates cohesionVector = this.cohesionForce(neighbors);
+			totalVector.plus(cohesionVector);
 			// Repulsion force
 			Coordinates repulsionVector = this.repulsionForce(neighbors);
-			// Pulling force
-			Coordinates pullingVector = this.pullingForce();
-			// Sums the force vectors
-			Coordinates totalVector = new Coordinates(0, 0);
-			totalVector.plus(alignmentVector);
-			totalVector.plus(cohesionVector);
 			totalVector.plus(repulsionVector);
-			totalVector.plus(pullingVector);
-			float newVelocity = totalVector.norm();
-			// The agent has a minimum and a maximum speed
-			if (newVelocity < this.minVelocity) {
-				this.velocity = this.minVelocity;
-			} else if (newVelocity > this.maxVelocity) {
-				this.velocity = this.maxVelocity;
-			} else {
-				this.velocity = newVelocity;
-			}
-			// TODO : use maxTurn as attribute
-			this.heading.turnTo(new Angle(totalVector), GoodGuy.maxTurn);
-		} else {
-			// Lets the agent wander in its current direction
+		}
+		float newVelocity = totalVector.norm();
+		// The agent has a minimum and a maximum speed
+		if (newVelocity < this.minVelocity) {
 			this.velocity = this.minVelocity;
+		} else if (newVelocity > this.maxVelocity) {
+			this.velocity = this.maxVelocity;
+		} else {
+			this.velocity = newVelocity;
+		}
+		// If the vector is not (0, 0)
+		if (newVelocity != 0) {
+			this.heading.turnTo(new Angle(totalVector), Agent.maxTurn);
 		}
 	}
 
@@ -127,7 +126,7 @@ public class GoodGuy extends Agent {
 		Coordinates pullingVector = new Coordinates(0, 0);
 		ArrayList<Agent> list = this.environment.getTypeAgents("Agent.Puller");
 		// If there is a puller agent in the environment
-		if (list!=null) {
+		if (list!=null && list.size()>0) {
 			Agent puller = list.get(0);
 			// Agents are attracted only if the puller is visible
 			if (Environment.isVisible(this, puller, Puller.pullingRadius, this.sightAngle)) {
@@ -146,10 +145,10 @@ public class GoodGuy extends Agent {
 		// Whenever a good guy pass on the puller, it is destroyed
 		ArrayList<Agent> list = this.environment.getTypeAgents("Agent.Puller");
 		// If there is a puller agent in the environment
-		if (list!=null) {
+		if (list!=null && list.size()>0) {
 			Agent puller = list.get(0);
 			// Verifies if an agent is close enough to the puller to destroy it
-			if (this.position.distance(puller.position) < this.size + Puller.pullerSize) {
+			if (this.collideWith(puller)) {
 				this.environment.getAgents().remove("Agent.Puller");
 			}
 		}
@@ -158,6 +157,6 @@ public class GoodGuy extends Agent {
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(Color.GREEN);
-		g.fillOval((int) this.position.x, (int) this.position.y, this.size, this.size);
+		g.fillOval((int) this.position.x, (int) this.position.y, (int) this.size, (int) this.size);
 	}
 }
