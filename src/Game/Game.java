@@ -9,6 +9,9 @@ import Environment.Coordinates;
 import Environment.Environment;
 import GUI.EnvironmentFrame;
 
+/** Game
+ * @author Clément
+ */
 public class Game {
 
 	// Game parameters
@@ -62,7 +65,6 @@ public class Game {
 		// The environment dimension depends on the screen size
 		Dimension dimension = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		int size = (int)dimension.getHeight() - 10;
-		System.out.println(size);
 		this.env = new Environment(size, size);
 	}
 
@@ -92,7 +94,7 @@ public class Game {
 	 */
 	public void run() {
 		// Sleeping time (in milliseconds)
-		int sleepTime = 13;
+		int sleepTime = 14;
 		try {
 			while(true) {
 				// Makes the agents move
@@ -105,9 +107,6 @@ public class Game {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		/* TODO : runner must call these things:
-		- detect collisions between good guys and bad guys
-		- notify GUI = send new agents positions */
 	}
 
 }

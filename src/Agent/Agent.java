@@ -7,6 +7,9 @@ import java.awt.Graphics;
 
 import Environment.Angle;
 
+/** Agent super class
+ * @author Clément
+ */
 public abstract class Agent {
 	
 	// Agent attributes
@@ -103,6 +106,10 @@ public abstract class Agent {
 	 */
 	public abstract void applyForces();
 	
+	/** Detects collisions and let the agents deal with them
+	 */
+	public abstract void detectCollisions();
+	
 	/** Draws an agent on a panel
 	 * @param g
 	 */
@@ -112,6 +119,18 @@ public abstract class Agent {
 	 */
 	public String toString() {
 		return "Pos:"+this.position+";H:"+this.heading+";V:"+this.velocity;
+	}
+	
+	/** Equality between two agents
+	 * Naive version, assuming two agents can't be at the same exact state at the same moment
+	 */
+	public boolean equals(Object otherAgent) {
+		Agent agent = (Agent) otherAgent;
+		boolean samePos = this.position.equals(agent.position);
+		boolean sameHead = this.heading.equals(agent.heading);
+		boolean sameVel = this.velocity == agent.velocity;
+		boolean sameSize = this.size == agent.size;
+		return samePos && sameHead && sameVel && sameSize;
 	}
 	
 }

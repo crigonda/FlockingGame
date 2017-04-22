@@ -4,6 +4,9 @@ import javax.swing.JFrame;
 
 import Environment.Environment;
 
+/** Game GUI
+ * @author Clément
+ */
 public class EnvironmentFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -14,7 +17,7 @@ public class EnvironmentFrame extends JFrame {
 	 */
 	public EnvironmentFrame(Environment env) {
 		// Set the text in the menu bar
-		this.setTitle("Flocking Game");
+		this.setTitle("Flocking Game (MOLIN-RIGONDAUD)");
 		this.setSize(env.getSizeX(), env.getSizeY());
 		// Set the relative position of the frame
 		this.setLocationRelativeTo(null);

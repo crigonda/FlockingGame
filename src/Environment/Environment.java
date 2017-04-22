@@ -6,12 +6,15 @@ import java.util.Map.Entry;
 
 import Agent.Agent;
 
+/** The environment of the agents
+ * @author Clément
+ */
 public class Environment {
 	
 	private int sizeX;
 	private int sizeY;
 	private HashMap<String, ArrayList<Agent>> agents;
-	
+
 	/** Builds up an environment for the agents to move in
 	 * @param sizeX
 	 * @param sizeY
@@ -36,11 +39,27 @@ public class Environment {
 		return this.sizeY;
 	}
 	
+	/**
+	 * @return agents
+	 */
+	public HashMap<String, ArrayList<Agent>> getAgents() {
+		return this.agents;
+	}
+	
+	/** Returns the class name of an agent
+	 * @param agent
+	 * @return className
+	 */
+	private String getAgentClassName(Agent agent) {
+		String[] tab = agent.getClass().toString().split(" ");
+		return tab[1];
+	}
+	
 	/** Adds an agent to the environment
 	 * @param agent
 	 */
 	public void addAgent(Agent agent) {
-		String className = agent.getClass().toString();
+		String className = this.getAgentClassName(agent);
 		// Creates a list to store the agents of the same type, if it does not already exist 
 		if (this.agents.get(className) == null) {
 			this.agents.put(className, new ArrayList<Agent>());
@@ -74,8 +93,12 @@ public class Environment {
 		for (Entry<String, ArrayList<Agent>> entry : this.agents.entrySet()) {
 			agents = entry.getValue();
 			for (int i=0; i<agents.size(); i++) {
+				// Apply forces on the agent
 				agents.get(i).applyForces();
+				// Makes the agent move one step forward
 				agents.get(i).forward();
+				// Detects collisions and deal with them
+				agents.get(i).detectCollisions();
 			}
 		}
 	}
@@ -102,27 +125,35 @@ public class Environment {
 	public ArrayList<Agent> neighbors(Agent agent, float radius, float sightAngle, boolean sameType) {
 		ArrayList<Agent> agents;
 		// Iterates only on the interesting agents
-		agents = sameType ? this.getTypeAgents(agent.getClass().toString()) : this.getAllAgents();
+		agents = sameType ? this.getTypeAgents(this.getAgentClassName(agent)) : this.getAllAgents();
 		ArrayList<Agent> neighbors = new ArrayList<Agent>();
-		Coordinates coord = agent.getPosition();
-		Coordinates c;
-		float angleDiff;
-		boolean inRadius = false, inSight = false;
+		Coordinates c, coord = agent.getPosition();
 		for (int i=0; i<agents.size(); i++) {
 			c = agents.get(i).getPosition();
-			inRadius = coord.distance(c) <= radius;
-			// Keeps only agents in radius
+			// Keeps only agents within a radius and a sight angle
 			// The agent itself should not be considered in its own neighborhood
-			if (inRadius && !c.equals(coord)) {
-				angleDiff = agent.getHeading().subtract(new Angle(c));
-				inSight = Math.abs(angleDiff) <= sightAngle;
-				// Keeps only agents within the sight angle
-				if (inSight) {
-					neighbors.add(agents.get(i));
-				}
+			if (!c.equals(coord) && Environment.isVisible(agent, agents.get(i), radius, sightAngle)) {
+				neighbors.add(agents.get(i));
 			}
 		}
 		return neighbors;
+	}
+
+	/** Returns true if agent b is visible to agent a (in sight radius and angle)
+	 * @param a
+	 * @param b
+	 * @param sightAngle
+	 * @return isVisible
+	 */
+	public static boolean isVisible(Agent a, Agent b, float radius, float sightAngle) {
+		Coordinates c = b.getPosition();
+		// In radius
+		boolean inRadius = a.getPosition().distance(c) <= radius;
+		// In sight
+		float angleDiff = a.getHeading().subtract(new Angle(c));
+		boolean inSight = Math.abs(angleDiff) <= sightAngle;
+		// Is visible
+		return inRadius && inSight;
 	}
 	
 }

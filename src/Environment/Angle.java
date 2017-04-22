@@ -4,7 +4,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /** Angle between 0 and 2Pi
  * @author Clément
- *
  */
 public class Angle {
 
@@ -75,6 +74,13 @@ public class Angle {
 		}
 		this.turnFrom(diff);
 		return this.angle;
+	}
+	
+	/** Equality between two angles
+	 */
+	public boolean equals(Object angle) {
+		Angle ang = (Angle) angle;
+		return ang.angle == this.angle;
 	}
 	
 	/** Angle to string

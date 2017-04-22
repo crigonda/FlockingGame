@@ -3,6 +3,9 @@ package Environment;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+/** 2D Coordinates
+ * @author Clément
+ */
 public class Coordinates {
 	
 	public float x;
@@ -87,15 +90,6 @@ public class Coordinates {
 		return (float) Math.sqrt(Math.pow(this.x - c.x, 2) + Math.pow(this.y - c.y, 2));
 	}
 	
-	/** Compares two set of coordinates
-	 * @param c
-	 * @return equals <br>
-	 * True if the coordinates are the same, else false
-	 */
-	public boolean equals(Coordinates c) {
-		return c.x == this.x && c.y == this.y;
-	}
-	
 	/** Computes the sum of a list of coordinates
 	 * @param coordList
 	 * @return sum
@@ -121,6 +115,13 @@ public class Coordinates {
 			mean.y /= nbCoord;
 		}
 		return mean;
+	}
+	
+	/** Equality between two set of coordinates
+	 */
+	public boolean equals(Object coord) {
+		Coordinates c = (Coordinates) coord;
+		return c.x == this.x && c.y == this.y;
 	}
 	
 	/** Coordinates to string
