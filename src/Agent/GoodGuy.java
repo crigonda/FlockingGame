@@ -13,7 +13,6 @@ import Environment.Environment;
  */
 public class GoodGuy extends Agent {
 
-	
 	// Force coefficients
 	private static float coeffAlignment = (float) 4;
 	private static float coeffCohesion = (float) 1.3;

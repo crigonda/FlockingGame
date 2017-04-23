@@ -17,7 +17,7 @@ public class EnvironmentFrame extends JFrame {
 	 */
 	public EnvironmentFrame(Environment env) {
 		// Set the text in the menu bar
-		this.setTitle("Flocking Game (MOLIN-RIGONDAUD)");
+		this.setTitle("Flocking Game (RIGONDAUD-MOLIN)");
 		this.setSize(env.getSizeX(), env.getSizeY());
 		// Set the relative position of the frame
 		this.setLocationRelativeTo(null);

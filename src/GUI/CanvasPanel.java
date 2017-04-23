@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import Agent.Agent;
 import Agent.Puller;
+import Agent.Repeler;
 import Environment.Coordinates;
 import Environment.Environment;
 
@@ -56,9 +57,11 @@ public class CanvasPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		Point pos = e.getPoint();
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			Point pos = e.getPoint();
 			this.createPuller(pos);
+		} else if (SwingUtilities.isRightMouseButton(e)) {
+			this.createRepeler(pos);
 		}
 	}
 
@@ -70,11 +73,16 @@ public class CanvasPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		Point pos = e.getPoint();
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			Point pos = e.getPoint();
 			this.createPuller(pos);
+		} else if (SwingUtilities.isRightMouseButton(e)) {
+			this.createRepeler(pos);
 		}
 	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
 
 	/** Creates a puller agent, adds it to the environment
 	 * @param pos
@@ -86,8 +94,13 @@ public class CanvasPanel extends JPanel implements MouseListener {
 		// Adds a puller
 		this.environment.addAgent(new Puller(coord, 0, 0, 0, 0, 0, this.environment));
 	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
+	
+	private void createRepeler(Point pos) {
+		Coordinates coord = new Coordinates(pos.x, pos.y);
+		// Removes the existing puller if there is one
+		this.environment.getAgents().remove("Agent.Repeler");
+		// Adds a repeler
+		this.environment.addAgent(new Repeler(coord, 0, 0, 0, 0, 0, this.environment));
+		
+	}
 }
