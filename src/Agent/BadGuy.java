@@ -15,8 +15,8 @@ import Environment.Environment;
 public class BadGuy extends Agent {
 
 	// Force coefficients
-	private static float coeffPursuit = (float) 1;
-	private static float coeffRepel = (float) 20;
+	private static float coeffPursuit = (float) 0.5;
+	private static float coeffRepel = (float) 30;
 	
 	public BadGuy(Coordinates pos, float vMin, float vMax, float radius, float angle, float size, Environment env) {
 		super(pos, vMin, vMax, radius, angle, size, env);
